@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Sentence Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #1e3a8a;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+
+        .input-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        select, input[type="text"] {
+            padding: 12px 15px;
+            font-size: 1em;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 250px;
+        }
+
+        select:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: #f97316;
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .button {
+            padding: 12px 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #generate-button {
+            background-color: #1e3a8a;
+            color: white;
+        }
+
+        #clear-button {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        #generate-button:hover, #clear-button:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        #sentences-container {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: left;
+            min-height: 200px;
+        }
+
+        #sentences-container ul {
+            list-style-type: decimal;
+            padding-left: 20px;
+        }
+
+        #sentences-container li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Word Sentence Generator</h1>
+        <div class="input-group">
+            <select id="wordType">
+                <option value="verb">Verb</option>
+                <option value="adjective">Adjective</option>
+                <option value="noun">Noun</option>
+                <option value="adverb">Adverb</option>
+            </select>
+            <input type="text" id="wordInput" placeholder="Enter a word or phrase">
+        </div>
+        <div class="buttons">
+            <button id="generate-button" class="button">Generate Sentences</button>
+            <button id="clear-button" class="button">Clear</button>
+        </div>
+        <div id="sentences-container">
+            <p>Your sentences will appear here...</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const generateBtn = document.getElementById('generate-button');
+            const clearBtn = document.getElementById('clear-button');
+            const wordTypeSelect = document.getElementById('wordType');
+            const wordInput = document.getElementById('wordInput');
+            const sentencesContainer = document.getElementById('sentences-container');
+
+            // Sample sentences for demonstration
+            const sampleSentences = {
+                'verb': [
+                    'She decided to **(word)** to the store.',
+                    'The birds **(word)** beautifully in the morning.',
+                    'Can you **(word)** the document before the meeting?',
+                    'He promised to **(word)** the homework by tonight.',
+                    'They need to **(word)** the solution to the problem.',
+                    'The athletes will **(word)** for the championship.',
+                    'I love to **(word)** new places.',
+                    'The chef will **(word)** a delicious meal for everyone.',
+                    'Please **(word)** your seatbelt before the car moves.',
+                    'We should **(word)** our efforts to finish this project.'
+                ],
+                'adjective': [
+                    'The sky was a **(word)** shade of blue.',
+                    'She wore a **(word)** dress to the party.',
+                    'His performance was truly **(word)**.',
+                    'It was a **(word)** day for a picnic.',
+                    'They live in a **(word)** house on the hill.',
+                    'The movie had a **(word)** ending.',
+                    'He has a very **(word)** personality.',
+                    'I am so **(word)** about the upcoming trip.',
+                    'The food was incredibly **(word)**.',
+                    'It was a **(word)** choice to make under pressure.'
+                ],
+                'noun': [
+                    'The **(word)** was a gift from her grandmother.',
+                    'We saw a beautiful **(word)** on our walk.',
+                    'He took a deep breath of the fresh mountain **(word)**.',
+                    'The team celebrated their victory with a brand new **(word)**.',
+                    'The **(word)** is an important part of the ecosystem.',
+                    'She carefully placed the **(word)** on the shelf.',
+                    'The **(word)** was a symbol of their friendship.',
+                    'His most valuable **(word)** is a collection of old books.',
+                    'The city is known for its beautiful public **(word)**.',
+                    'The **(word)** arrived on time and was very helpful.'
+                ],
+                'adverb': [
+                    'He ran **(word)** to catch the bus.',
+                    'The cat crept **(word)** through the grass.',
+                    'She spoke **(word)** so everyone could hear.',
+                    'The project was completed **(word)** ahead of schedule.',
+                    'He walked **(word)** down the lonely street.',
+                    'They answered the questions **(word)** and with confidence.',
+                    'The baby slept **(word)** in its crib.',
+                    'She solved the puzzle **(word)** and without any help.',
+                    'The car drove **(word)** along the winding road.',
+                    'He smiled **(word)** as he received the award.'
+                ]
+            };
+
+            const generateSentences = () => {
+                const word = wordInput.value.trim();
+                const wordType = wordTypeSelect.value;
+                
+                if (word === '') {
+                    sentencesContainer.innerHTML = '<p style="color: #ef4444;">Please enter a word or phrase.</p>';
+                    return;
+                }
+
+                const sentences = sampleSentences[wordType];
+                if (sentences) {
+                    let htmlList = '<ul>';
+                    sentences.forEach((sentence, index) => {
+                        const newSentence = sentence.replace('(word)', '<b>' + word + '</b>');
+                        htmlList += `<li>${newSentence}</li>`;
+                    });
+                    htmlList += '</ul>';
+                    sentencesContainer.innerHTML = htmlList;
+                } else {
+                    sentencesContainer.innerHTML = '<p style="color: #ef4444;">No sentences available for this word type.</p>';
+                }
+            };
+
+            const clearActivity = () => {
+                wordInput.value = '';
+                wordTypeSelect.value = 'verb';
+                sentencesContainer.innerHTML = '<p>Your sentences will appear here...</p>';
+            };
+
+            generateBtn.addEventListener('click', generateSentences);
+            clearBtn.addEventListener('click', clearActivity);
+
+            wordInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    generateSentences();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
